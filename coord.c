@@ -20,7 +20,7 @@ int ec_add_coord(Coordinate **coords, int *size, char *name, int x, int y, int z
     (*coords)[*size].z = z;
     (*size)++;
 
-    return 0; // Success
+    return 0; 
 }
 
 // Deletes the coord by name
@@ -36,7 +36,7 @@ int ec_del_coord(Coordinate **coords, int *size, char *name) {
                 printf("Memory allocation failed\n");
                 return 1; // Failure due to memory allocation error
             }
-            return 0; // Success
+            return 0; 
         }
     }
     return 2; // Failure due to not finding the name
@@ -49,7 +49,7 @@ int ec_edit_coord(Coordinate *coords, int size, char *name, int newX, int newY, 
             coords[i].x = newX;
             coords[i].y = newY;
             coords[i].z = newZ;
-            return 0; // Success
+            return 0; 
         }
     }
     return 1; // Failure due to not finding the name
@@ -63,7 +63,7 @@ int ec_list_coords(Coordinate *coords, int size) {
     }
     printf("+------------------------------+\n");
 
-    return 0; // Success
+    return 0; 
 }
 
 int ec_save_coords(Coordinate *coords, int size, const char *filename) {
@@ -78,7 +78,7 @@ int ec_save_coords(Coordinate *coords, int size, const char *filename) {
     }
 
     fclose(file); // Ensure file is closed before returning
-    return 0; // Success
+    return 0; 
 }
 
 int ec_load_coords(Coordinate **coords, int *size, const char* filename) {
@@ -99,5 +99,5 @@ int ec_load_coords(Coordinate **coords, int *size, const char* filename) {
     }
 
     fclose(file);
-    return 0; // Success
+    return 0; 
 }
