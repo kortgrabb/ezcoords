@@ -4,6 +4,7 @@
 #include "coord.h" // Ensure this header defines Coordinate structure and NAME_MAX
 
 #define DEFAULT_FILE_NAME "saved_coords.ec"
+#define DOCUMENTS_FOLDER_ENV_VAR "USERPROFILE"
 
 void clear_screen() {
     #ifdef _WIN32
@@ -13,18 +14,32 @@ void clear_screen() {
     #endif
 }
 
+char* get_documents_folder() {
+    char* documents_folder = getenv(DOCUMENTS_FOLDER_ENV_VAR);
+    if (documents_folder == NULL) {
+        fprintf(stderr, "Failed to get the Documents folder path.\n");
+        exit(1);
+    }
+    return documents_folder;
+}
+
 int main() {
     Coordinate *coords = NULL;
     int size = 0;
     int choice;
     char name[256];
     int x, y, z;
-    char input[256]; // Buffer to store user input
+    char input[256];
+    char file_path[512]; 
 
-    if (ec_load_coords(&coords, &size, DEFAULT_FILE_NAME) != 0) {
+    char* documents_folder = get_documents_folder();
+    snprintf(file_path, sizeof(file_path), "%s/%s", documents_folder, DEFAULT_FILE_NAME);
+
+    if (ec_load_coords(&coords, &size, file_path) != 0) {
         printf("Failed to load coordinates.\n");
     }
 
+    clear_screen();
     while (1) {
         printf("\nEzCoords Dashboard\n");
         printf("1. Add Coordinate\n");
@@ -82,9 +97,15 @@ int main() {
                 printf("Invalid choice. Please enter a number between 1 and 7.\n");
         }
 
-        if (ec_save_coords(coords, size, DEFAULT_FILE_NAME) != 0) {
+        if (ec_save_coords(coords, size, file_path) != 0) {
             printf("Failed to save coordinates.\n");
         }
+
+        printf("\nPress enter to continue...");
+        // wait for input and clear screen
+        int c;
+        while ((c = getchar()) != '\n' && c != EOF) {}
+        clear_screen();
     }
 
     return 0;
