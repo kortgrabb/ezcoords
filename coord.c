@@ -6,6 +6,16 @@
 
 // Adds a new coordinate to the coords pointer
 int ec_add_coord(Coordinate **coords, int *size, char *name, int x, int y, int z) {
+
+    // Check for dupes
+    for (int i = 0; i < *size; i++) {
+        if (strcmp((*coords)[i].name, name) == 0) {
+            printf("coord with same name exists!\n");
+            return 1; 
+        }
+    }
+
+    // Add 1 to the size of (coords) but keep the data of
     Coordinate *newCoords = realloc(*coords, (*size + 1) * sizeof(Coordinate));
     if (newCoords == NULL) {
         printf("Memory allocation failed\n");
@@ -13,7 +23,9 @@ int ec_add_coord(Coordinate **coords, int *size, char *name, int x, int y, int z
     }
 
     *coords = newCoords;
+
     strncpy((*coords)[*size].name, name, NAME_MAX - 1);
+
     // Ensure the string is null-terminated
     (*coords)[*size].name[NAME_MAX - 1] = '\0'; 
     (*coords)[*size].x = x;
@@ -29,11 +41,12 @@ int ec_del_coord(Coordinate **coords, int *size, char *name) {
     for (int i = 0; i < *size; i++) {
         if (strcmp((*coords)[i].name, name) == 0) {
             for (int j = i; j < *size - 1; j++) {
-                (*coords)[j] = (*coords)[j + 1]; // Shift elements down
+                // Shift elements down
+                (*coords)[j] = (*coords)[j + 1]; 
             }
             (*size)--;
             *coords = realloc(*coords, (*size) * sizeof(Coordinate));
-            if (*coords == NULL && *size > 0) { // Check for realloc failure
+            if (*coords == NULL && *size > 0) { 
                 printf("Memory allocation failed\n");
                 return 1; 
             }
@@ -95,7 +108,7 @@ int ec_load_coords(Coordinate **coords, int *size, const char* filename) {
     char name[NAME_MAX];
     int x, y, z;
 
-    while(fscanf(file, "%99s | %d | %d | %d", name, &x, &y, &z) == 4) {
+    while(fscanf(file, "%s | %d | %d | %d", name, &x, &y, &z) == 4) {
         if (ec_add_coord(coords, size, name, x, y, z) != 0) {
             fclose(file);
             return 2; 
